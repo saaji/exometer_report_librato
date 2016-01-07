@@ -1,0 +1,18 @@
+{application, 'exometer_report_librato', [
+    {description, "Librator Reporter for Exometer"},
+    {vsn, "0.1.0"},
+    {registered, []},
+    {applications, [
+        kernel,
+        stdlib,
+        ssl,
+        inets,
+        exometer
+    ]},
+    {env,[]},
+    {modules, []},
+
+    {contributors, ["Adam Lindberg <hello@alind.io>"]},
+    {licenses, ["MIT"]},
+    {links, [{"GitHub", "https://github.com/eproxus/exometer_report_librato"}]}
+]}.
