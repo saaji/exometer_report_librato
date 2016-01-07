@@ -7,7 +7,7 @@
         stdlib,
         ssl,
         inets,
-        exometer
+        exometer_core
     ]},
     {env,[]},
     {modules, []},
