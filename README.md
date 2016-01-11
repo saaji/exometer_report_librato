@@ -52,7 +52,16 @@ The reporter can be configured with the following options:
     excluding the host name, because Librato does not support @ characters in a
     source name.
 
-    *Default:* name part of the Erlang node name
+    If the source option is set to `nodename`, the name part of the Erlang node
+    name will be used. If it is set to `hostname`, the host name part will be
+    used.
+
+    If the source option is a fun, that fun will be called when the reportert
+    is initialized and the return value will be used as the source name.
+
+    If the source option is a string, that string will be used.
+
+    *Default:* `nodename`
 
 * `interval` *(integer)*
 

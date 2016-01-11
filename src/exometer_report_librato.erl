@@ -19,12 +19,11 @@
 %--- Callbacks ----------------------------------------------------------------
 
 exometer_init(Options) ->
-    Source = fun() -> list_to_binary(string:sub_word(atom_to_list(node()), 1, $@)) end,
     {ok, #{
         endpoint => get(endpoint, Options, ?ENDPOINT),
         user     => get(user, Options),
         token    => get(token, Options),
-        source   => get(source, Options, Source),
+        source   => source(get(source, Options, nodename)),
         interval => get(interval, Options, 10000),
         type_map => validate_type_map(get(type_map, Options, [])),
         last     => erlang:monotonic_time(milli_seconds),
@@ -84,6 +83,15 @@ get(Option, Options, Default) when is_function(Default) ->
     end;
 get(Option, Options, Default) ->
     get(Option, Options, fun() -> Default end).
+
+source(nodename) ->
+    list_to_binary(string:sub_word(atom_to_list(node()), 1, $@));
+source(hostname) ->
+    list_to_binary(string:sub_word(atom_to_list(node()), 2, $@));
+source(Fun) when is_function(Fun) ->
+    Fun();
+source(Name) when is_list(Name) ->
+    Name.
 
 validate_type_map(TypeMap) -> [validate_type(T) || T <- TypeMap].
 
