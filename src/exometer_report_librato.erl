@@ -49,8 +49,7 @@ exometer_report(Metric, DataPoint, Extra, Value, State) ->
             {ok, NewState}
     end.
 
-exometer_newentry(Entry, State) ->
-    error_logger:info_msg("Unknown entry ~p~n", [Entry]),
+exometer_newentry(_Entry, State) ->
     {ok, State}.
 
 exometer_info(Unknown, State) ->
