@@ -2,11 +2,6 @@
 
 -define(ENDPOINT, <<"https://metrics-api.librato.com/v1/metrics">>).
 
-% TODO:
-% [x] Collect metrics until pushed
-% [x] Push at variable timeouts, based on metrics?
-% [x] Validate type map
-
 -compile(export_all).
 
 %--- Callbacks ----------------------------------------------------------------
@@ -150,11 +145,6 @@ metric({Metric, DataPoint, Value, Time}, Source) ->
         measure_time => Time,
         source => Source
     }.
-
-% [a, b] -> "a.b"
-% [a, b, value] -> "a.b"
-% [] -> "" | error
-% [a, b]
 
 name([Key|Metric]) ->
     iolist_to_binary([atom_to_binary(Key, utf8), names(Metric)]).
