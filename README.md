@@ -56,7 +56,7 @@ The reporter can be configured with the following options:
     name will be used. If it is set to `hostname`, the host name part will be
     used.
 
-    If the source option is a fun, that fun will be called when the reportert
+    If the source option is a fun, that fun will be called when the reporter
     is initialized and the return value will be used as the source name.
 
     If the source option is a string, that string will be used.
