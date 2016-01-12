@@ -136,7 +136,12 @@ send_metrics(#{metrics := Metrics, source := Source} = State) ->
                 error_logger:error_msg("unexpected error: ~p~n", [Reason])
         end
     catch
-        E:R -> error_logger:error_msg("unexpected error ~p ~p~n", [E, R])
+        Class:Exception ->
+            error_logger:error_report([
+                {class, Class},
+                {reason, Exception},
+                {stacktrace, erlang:get_stacktrace()}
+            ])
     end,
     State#{metrics := #{counters => [], gauges => []}}.
 
