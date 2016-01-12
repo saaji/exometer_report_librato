@@ -152,11 +152,16 @@ post(URL, Headers, Body) ->
 
 metric({Metric, DataPoint, Value, Time}, Source) ->
     #{
-        name => name(Metric ++ [DataPoint]),
+        name => name(Metric, DataPoint),
         value => Value,
         measure_time => Time,
         source => Source
     }.
+
+name(Metric, DataPoint) when is_list(DataPoint) ->
+    name(Metric ++ DataPoint);
+name(Metric, DataPoint) when is_atom(DataPoint) ->
+    name(Metric ++ [DataPoint]).
 
 name([Key|Metric]) ->
     iolist_to_binary([atom_to_binary(Key, utf8), names(Metric)]).
