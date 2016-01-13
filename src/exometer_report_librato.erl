@@ -54,17 +54,27 @@ exometer_newentry(_Entry, State) ->
     {ok, State}.
 
 exometer_info(Unknown, State) ->
-    error_logger:info_msg("Unknown info ~p~n", [Unknown]),
+    error_logger:info_report([
+        {module, ?MODULE},
+        {unknown_info, Unknown}
+    ]),
     {ok, State}.
 
 exometer_cast(Unknown, State) ->
-    error_logger:info_msg("Unknown cast ~p~n", [Unknown]),
+    error_logger:info_report([
+        {module, ?MODULE},
+        {unknown_cast, Unknown}
+    ]),
     {ok, State}.
 
 exometer_call(state, _From, State) ->
     {reply, State, State};
 exometer_call(Unknown, From, State) ->
-    error_logger:info_msg("Unknown call ~p from ~p~n", [Unknown, From]),
+    error_logger:info_report([
+        {module, ?MODULE},
+        {unknown_call, Unknown},
+        {from, From}
+    ]),
     {ok, State}.
 
 exometer_unsubscribe(_Metric, _DataPoint, _Extra, State) ->
@@ -133,14 +143,26 @@ send_metrics(#{metrics := Metrics} = State) ->
         case post(uri(State), [auth(State)], Payload) of
             {ok, {{_, 200, _}, _Headers, _Body}} ->
                 ok;
-            {ok, {{_, Status, Reason}, _Headers, _Body}} ->
-                error_logger:error_msg("unexpected response: ~p ~s~n", [Status, Reason]);
+            {ok, {{_, Status, Reason}, Headers, Body}} ->
+                error_logger:error_report([
+                    unexpected_http_response,
+                    {module, ?MODULE},
+                    {status, Status},
+                    {reason, Reason},
+                    {headers, Headers},
+                    {body, Body}
+                ]);
             {error, Reason} ->
-                error_logger:error_msg("unexpected error: ~p~n", [Reason])
+                error_logger:error_report([
+                    unexpected_http_error,
+                    {module, ?MODULE},
+                    {reason, Reason}
+                ])
         end
     catch
         Class:Exception ->
             error_logger:error_report([
+                {module, ?MODULE},
                 {class, Class},
                 {reason, Exception},
                 {stacktrace, erlang:get_stacktrace()}
