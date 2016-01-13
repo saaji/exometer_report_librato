@@ -154,7 +154,7 @@ post(URL, Headers, Body) ->
 metric(State, {Metric, DataPoint, Value, Time}) ->
     #{source := Source, prefix := Prefix} = State,
     #{
-        namie => name(lists:flatten([Prefix, Metric, DataPoint])),
+        name => name(lists:flatten([Prefix, Metric, DataPoint])),
         value => Value,
         measure_time => Time,
         source => Source
