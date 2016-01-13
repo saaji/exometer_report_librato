@@ -24,6 +24,7 @@ exometer_init(Options) ->
         user     => get(user, Options),
         token    => get(token, Options),
         source   => source(get(source, Options, nodename)),
+        prefix   => get(prefix, Options, []),
         interval => get(interval, Options, 10000),
         type_map => validate_type_map(get(type_map, Options, [])),
         last     => erlang:monotonic_time(milli_seconds),
@@ -119,12 +120,12 @@ check_timeout(#{interval := Interval, last := Last} = State) ->
         true                       -> {wait, State}
     end.
 
-send_metrics(#{metrics := Metrics, source := Source} = State) ->
+send_metrics(#{metrics := Metrics} = State) ->
     try
         #{counters := Counters, gauges := Gauges} = Metrics,
         Payload = jiffy:encode(#{
-            counters => [metric(C, Source) || C <- Counters],
-            gauges => [metric(G, Source) || G <- Gauges]
+            counters => [metric(State, C) || C <- Counters],
+            gauges => [metric(State, G) || G <- Gauges]
         }),
 
         case post(uri(State), [auth(State)], Payload) of
@@ -150,18 +151,14 @@ uri(#{endpoint := Endpoint}) -> binary_to_list(Endpoint).
 post(URL, Headers, Body) ->
     httpc:request(post, {URL, Headers, "application/json", Body}, [{timeout, 5000}], [{body_format, binary}]).
 
-metric({Metric, DataPoint, Value, Time}, Source) ->
+metric(State, {Metric, DataPoint, Value, Time}) ->
+    #{source := Source, prefix := Prefix} = State,
     #{
-        name => name(Metric, DataPoint),
+        namie => name(lists:flatten([Prefix, Metric, DataPoint])),
         value => Value,
         measure_time => Time,
         source => Source
     }.
-
-name(Metric, DataPoint) when is_list(DataPoint) ->
-    name(Metric ++ DataPoint);
-name(Metric, DataPoint) when is_atom(DataPoint) ->
-    name(Metric ++ [DataPoint]).
 
 name([Key|Metric]) ->
     iolist_to_binary([atom_to_binary(Key, utf8), names(Metric)]).

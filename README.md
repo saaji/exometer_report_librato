@@ -63,6 +63,15 @@ The reporter can be configured with the following options:
 
     *Default:* `nodename`
 
+* `prefix` *(list of atoms)*
+
+    Prefix that will be added to the front of all metric names. This way you
+    can name space certain things inside your Librato project, e.g. a prefix
+    set to `[myapp, erlang]` would generate metrics with names starting with
+    `myapp.erlang._`.
+
+    *Default:* `[]`
+
 * `interval` *(integer)*
 
     The interval in milliseconds to send metric batches to Librato.
