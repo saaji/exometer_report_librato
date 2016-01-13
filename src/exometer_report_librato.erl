@@ -61,6 +61,8 @@ exometer_cast(Unknown, State) ->
     error_logger:info_msg("Unknown cast ~p~n", [Unknown]),
     {ok, State}.
 
+exometer_call(state, _From, State) ->
+    {reply, State, State};
 exometer_call(Unknown, From, State) ->
     error_logger:info_msg("Unknown call ~p from ~p~n", [Unknown, From]),
     {ok, State}.
