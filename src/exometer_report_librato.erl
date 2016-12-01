@@ -192,7 +192,12 @@ names([]) ->
 names([value]) ->
     [];
 names([Key|Metric]) ->
-    [$., atom_to_binary(Key, utf8)|names(Metric)].
+    [$., key_name(Key)|names(Metric)].
+
+key_name(Key) when is_atom(Key) ->
+    atom_to_binary(Key, utf8);
+key_name(Num) when is_number(Num) ->
+    list_to_binary(integer_to_list(Num)).
 
 auth(#{user := User, token := Token}) ->
     Hash = base64:encode_to_string(lists:append([User, ":", Token])),
